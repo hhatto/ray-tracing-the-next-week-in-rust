@@ -151,10 +151,10 @@ fn main() {
                 }
             }
             col = col / ns as f32;
-            col = Vec3::new(col.e.0.sqrt(), col.e.1.sqrt(), col.e.2.sqrt());
-            let ir = (255.99 * col.e.0) as i32;
-            let ig = (255.99 * col.e.1) as i32;
-            let ib = (255.99 * col.e.2) as i32;
+            col = Vec3::new(col.e[0].sqrt(), col.e[1].sqrt(), col.e[2].sqrt());
+            let ir = (255.99 * col.e[0]) as i32;
+            let ig = (255.99 * col.e[1]) as i32;
+            let ib = (255.99 * col.e[2]) as i32;
             println!("{} {} {}", ir, ig, ib);
         }
     }

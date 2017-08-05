@@ -7,6 +7,8 @@ pub mod sphere;
 pub mod camera;
 pub mod material;
 pub mod random;
+pub mod aabb;
+pub mod bvh;
 
 #[macro_export]
 macro_rules! get_sphere {

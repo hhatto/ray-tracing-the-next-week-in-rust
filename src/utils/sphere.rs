@@ -3,8 +3,10 @@ use utils::ray::Ray;
 use utils::vec3::{dot, Vec3};
 use utils::random::drand48;
 use utils::material::Material;
+use utils::aabb::AABB;
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct Sphere {
     pub center: Vec3,
     radius: f32,
@@ -23,6 +25,9 @@ impl Sphere {
 }
 
 impl Hitable for Sphere {
+    fn box_clone(&self) -> Box<Hitable> {
+        Box::new((*self).clone())
+    }
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool {
         let oc: Vec3 = r.origin().clone() - self.center.clone();
         let a: f32 = dot(r.direction(), r.direction());
@@ -49,10 +54,17 @@ impl Hitable for Sphere {
         }
         return false;
     }
+
+    fn bounding_box(&self, t0: f32, t1: f32, vox: &mut AABB) -> bool {
+        *vox = AABB::new(Vec3::new(self.radius, self.radius, self.radius) - self.center.clone(),
+                         Vec3::new(self.radius, self.radius, self.radius));
+        true
+    }
 }
 
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct MovingSphere {
     pub center0: Vec3,
     pub center1: Vec3,
@@ -82,6 +94,9 @@ impl MovingSphere {
 }
 
 impl Hitable for MovingSphere {
+    fn box_clone(&self) -> Box<Hitable> {
+        Box::new((*self).clone())
+    }
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool {
         let oc: Vec3 = r.origin().clone() - self.center(r.clone().time());
         let a: f32 = dot(r.direction(), r.direction());
@@ -107,6 +122,11 @@ impl Hitable for MovingSphere {
             }
         }
         return false;
+    }
+
+    fn bounding_box(&self, t0: f32, t1: f32, vox: &mut AABB) -> bool {
+        // not implemented
+        false
     }
 }
 
