@@ -35,8 +35,6 @@ struct BVHNode {
 #[allow(dead_code)]
 impl BVHNode {
     pub fn new(l: &mut Vec<Box<Hitable>>, time0: f32, time1: f32) -> Self {
-        // let mut left = Box::new(AABB::new(Vec3::new(0., 0., 0.), Vec3::new(0., 0., 0.)));
-        // let mut right = Box::new(AABB::new(Vec3::new(0., 0., 0.), Vec3::new(0., 0., 0.)));
         let axis = (3. * drand48()) as i32;
         if axis == 0 {
             l.sort_by(|a, b| box_compare!(x, a, b));
@@ -50,13 +48,12 @@ impl BVHNode {
         } else if l.len() == 2 {
             (l[0].clone(), l[1].clone())
         } else {
-               let (svf, svl) = l.split_at(l.len() / 2);
-               let mut vl: Vec<Box<Hitable>> = vec![];
-               let mut vf: Vec<Box<Hitable>> = vec![];
-               //let vf: Vec<Box<Hitable>> = svf.iter().map(|&i| i);
-               vf.extend(svf.iter().map(|ref i| (**i).clone()));
-               vl.extend(svl.iter().map(|ref i| (**i).clone()));
-               (Box::new(BVHNode::new(&mut vf, time0, time1)), Box::new(BVHNode::new(&mut vl, time0, time1)))
+            let (svf, svl) = l.split_at(l.len() / 2);
+            let mut vl: Vec<Box<Hitable>> = vec![];
+            let mut vf: Vec<Box<Hitable>> = vec![];
+            vf.extend(svf.iter().map(|ref i| (**i).clone()));
+            vl.extend(svl.iter().map(|ref i| (**i).clone()));
+            (Box::new(BVHNode::new(&mut vf, time0, time1)), Box::new(BVHNode::new(&mut vl, time0, time1)))
         };
 
         let mut box_left = AABB::new(Vec3::new(0., 0., 0.), Vec3::new(0., 0., 0.));
@@ -105,5 +102,3 @@ impl Hitable for BVHNode {
         true
     }
 }
-
-// fn box_compare(a: hitable, b: hitable) -> ordering {

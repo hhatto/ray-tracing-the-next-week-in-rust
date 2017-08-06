@@ -9,3 +9,7 @@ rand = "0.3"
 [[bin]]
 name = "main"
 path = "src/main.rs"
+
+[[bin]]
+name = "main32"
+path = "src/main32.rs"
