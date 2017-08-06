@@ -1,5 +1,4 @@
 use std::mem;
-use std::cmp;
 use utils::vec3::Vec3;
 use utils::ray::Ray;
 use utils::hitable::{Hitable, HitRecord};
@@ -10,7 +9,6 @@ pub struct AABB {
     max: Vec3,
 }
 
-#[allow(dead_code)]
 impl AABB {
     pub fn new(a: Vec3, b: Vec3) -> Self {
         Self { min: a, max: b }
@@ -29,7 +27,7 @@ impl Hitable for AABB {
     fn box_clone(&self) -> Box<Hitable> {
         Box::new((*self).clone())
     }
-    fn hit(&self, r: &Ray, tmin: f32, tmax: f32, rec: &mut HitRecord) -> bool {
+    fn hit(&self, r: &Ray, tmin: f32, tmax: f32, _rec: &mut HitRecord) -> bool {
         for a in 0..3 {
             // let t0 = ffmin((self.min.e[a] - r.origin().e[a]) / r.direction().e[a],
             //               (self.max.e[a] - r.origin().e[a]) / r.direction().e[a]);
@@ -63,11 +61,12 @@ impl Hitable for AABB {
         true
     }
 
-    fn bounding_box(&self, t0: f32, t1: f32, vox: &mut AABB) -> bool {
+    fn bounding_box(&self, _t0: f32, _t1: f32, _vox: &mut AABB) -> bool {
         false
     }
 }
 
+#[allow(dead_code)]
 fn ffmin(a: f32, b: f32) -> f32 {
     if a < b {
         a
@@ -76,6 +75,7 @@ fn ffmin(a: f32, b: f32) -> f32 {
     }
 }
 
+#[allow(dead_code)]
 fn ffmax(a: f32, b: f32) -> f32 {
     if a > b {
         a

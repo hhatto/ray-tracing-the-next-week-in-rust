@@ -5,7 +5,6 @@ use utils::random::drand48;
 use utils::material::Material;
 use utils::aabb::AABB;
 
-#[allow(dead_code)]
 #[derive(Clone)]
 pub struct Sphere {
     pub center: Vec3,
@@ -13,7 +12,6 @@ pub struct Sphere {
     mat: Box<Material>,
 }
 
-#[allow(dead_code)]
 impl Sphere {
     pub fn new(cen: Vec3, r: f32, m: Box<Material>) -> Self {
         Self {
@@ -55,7 +53,7 @@ impl Hitable for Sphere {
         return false;
     }
 
-    fn bounding_box(&self, t0: f32, t1: f32, vox: &mut AABB) -> bool {
+    fn bounding_box(&self, _t0: f32, _t1: f32, vox: &mut AABB) -> bool {
         *vox = AABB::new(Vec3::new(self.radius, self.radius, self.radius) - self.center.clone(),
                          Vec3::new(self.radius, self.radius, self.radius));
         true
@@ -124,7 +122,7 @@ impl Hitable for MovingSphere {
         return false;
     }
 
-    fn bounding_box(&self, t0: f32, t1: f32, vox: &mut AABB) -> bool {
+    fn bounding_box(&self, _t0: f32, _t1: f32, _vox: &mut AABB) -> bool {
         // not implemented
         false
     }
