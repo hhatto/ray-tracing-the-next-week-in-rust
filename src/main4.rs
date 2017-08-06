@@ -19,7 +19,7 @@ const NY: i32 = 200;
 const NS: i32 = 100;
 
 fn two_perlin_spheres() -> HitableList {
-    let pertext = NoiseTexture::new();
+    let pertext = NoiseTexture::new(3.1);
     let mut list = HitableList::new(vec![]);
     list.list.push(get_sphere!(Lambertian, Box::new(pertext.clone()), Vec3::new(0., -1000., 0.), 1000.));
     list.list.push(get_sphere!(Lambertian, Box::new(pertext), Vec3::new(0., 2., 0.), 2.));
