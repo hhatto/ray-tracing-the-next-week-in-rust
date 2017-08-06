@@ -9,6 +9,7 @@ pub mod material;
 pub mod random;
 pub mod aabb;
 pub mod bvh;
+pub mod texture;
 
 #[macro_export]
 macro_rules! get_sphere {

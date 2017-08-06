@@ -10,6 +10,7 @@ use utils::hitable::{Hitable, HitableList, HitRecord};
 use utils::sphere::{MovingSphere, Sphere};
 use utils::camera::Camera;
 use utils::material::{DummyMat, Lambertian, Metal, Dielectric};
+use utils::texture::{CheckerTexture, ConstantTexture};
 use utils::random::drand48;
 
 const CONCURRENCY: i32 = 8;
@@ -19,7 +20,9 @@ const NS: i32 = 100;
 
 fn random_scene() -> HitableList {
     let mut list = HitableList::new(vec![]);
-    list.list.push(get_sphere!(Lambertian, Vec3::new(0.5, 0.5, 0.5), Vec3::new(0., -1000., 0.), 1000.));
+    let checker = CheckerTexture::new(Box::new(ConstantTexture::new(Vec3::new(0.2, 0.3, 0.1))),
+                                      Box::new(ConstantTexture::new(Vec3::new(0.9, 0.9, 0.9))));
+    list.list.push(get_sphere!(Lambertian, Box::new(checker), Vec3::new(0., -1000., 0.), 1000.));
 
     for a in -11..11 {
         for b in -11..11 {
@@ -27,10 +30,11 @@ fn random_scene() -> HitableList {
             let center = Vec3::new(a as f32 + 0.9 * drand48(), 0.2, b as f32 * 0.9 * drand48());
             if (center.clone() - Vec3::new(4., 0.2, 0.)).len() > 0.9 {
                 if choose_mat < 0.8 {
+                    let t = ConstantTexture::new(Vec3::new(drand48() * drand48(),
+                                                           drand48() * drand48(),
+                                                           drand48() * drand48()));
                     list.list.push(get_moving_sphere!(Lambertian,
-                                                      Vec3::new(drand48() * drand48(),
-                                                                drand48() * drand48(),
-                                                                drand48() * drand48()),
+                                                      Box::new(t),
                                                       center.clone(),
                                                       Vec3::new(0., 0.5 * drand48(), 0.) + center,
                                                       0.2));
@@ -50,7 +54,7 @@ fn random_scene() -> HitableList {
     }
 
     list.list.push(get_sphere!(Dielectric, 1.5, Vec3::new(0., 1., 0.), 1.));
-    list.list.push(get_sphere!(Lambertian, Vec3::new(0.4, 0.2, 0.1), Vec3::new(-4., 1., 0.), 1.));
+    list.list.push(get_sphere!(Lambertian, Box::new(ConstantTexture::new(Vec3::new(0.4, 0.2, 0.1))), Vec3::new(-4., 1., 0.), 1.));
     list.list.push(get_sphere!(Metal, Vec3::new(0.7, 0.6, 0.5), 0., Vec3::new(4., 1., 0.), 1.));
 
     list

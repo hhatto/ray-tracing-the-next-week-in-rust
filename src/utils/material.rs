@@ -3,6 +3,7 @@ use utils::ray::Ray;
 use utils::sphere::random_in_unit_sphere;
 use utils::hitable::HitRecord;
 use utils::random::drand48;
+use utils::texture::Texture;
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool;
@@ -41,15 +42,14 @@ impl Material for DummyMat {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Clone)]
 pub struct Lambertian {
-    pub albedo: Vec3,
+    albedo: Box<Texture>,
 }
 
 #[allow(dead_code)]
 impl Lambertian {
-    pub fn new(a: Vec3) -> Self {
+    pub fn new(a: Box<Texture>) -> Self {
         Self { albedo: a }
     }
 }
@@ -57,9 +57,8 @@ impl Lambertian {
 impl Material for Lambertian {
     fn scatter(&self, _r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
         let target = rec.normal.clone() + random_in_unit_sphere();
-        let s_ray = Ray::new(&rec.p, &target, 0.);
-        *scattered = s_ray.clone();
-        *attenuation = self.albedo.clone();
+        *scattered = Ray::new(&rec.p, &target, 0.).clone();
+        *attenuation = self.albedo.value(0., 0., rec.p.clone());
         true
     }
     fn box_clone(&self) -> Box<Material> {
