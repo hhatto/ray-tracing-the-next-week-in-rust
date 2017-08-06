@@ -1,4 +1,5 @@
 use utils::vec3::Vec3;
+use utils::perlin::Perlin;
 
 pub trait Texture {
     fn value(&self, u: f32, v: f32, p: Vec3) -> Vec3;
@@ -13,7 +14,7 @@ impl Clone for Box<Texture> {
 
 #[derive(Clone)]
 pub struct ConstantTexture {
-    color: Vec3
+    color: Vec3,
 }
 
 #[allow(dead_code)]
@@ -36,7 +37,7 @@ impl Texture for ConstantTexture {
 #[derive(Clone)]
 pub struct CheckerTexture {
     odd: Box<Texture>,
-    even: Box<Texture>
+    even: Box<Texture>,
 }
 
 #[allow(dead_code)]
@@ -54,6 +55,28 @@ impl Texture for CheckerTexture {
         } else {
             self.even.value(u, v, p)
         }
+    }
+
+    fn box_clone(&self) -> Box<Texture> {
+        Box::new((*self).clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct NoiseTexture {
+    noise: Perlin,
+}
+
+#[allow(dead_code)]
+impl NoiseTexture {
+    pub fn new() -> Self {
+        Self { noise: Perlin::new() }
+    }
+}
+
+impl Texture for NoiseTexture {
+    fn value(&self, _u: f32, _v: f32, p: Vec3) -> Vec3 {
+        Vec3::new(1., 1., 1.) * self.noise.noise(p)
     }
 
     fn box_clone(&self) -> Box<Texture> {

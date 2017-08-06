@@ -13,3 +13,7 @@ path = "src/main.rs"
 [[bin]]
 name = "main32"
 path = "src/main32.rs"
+
+[[bin]]
+name = "main4"
+path = "src/main4.rs"

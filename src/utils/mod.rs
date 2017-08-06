@@ -10,6 +10,7 @@ pub mod random;
 pub mod aabb;
 pub mod bvh;
 pub mod texture;
+pub mod perlin;
 
 #[macro_export]
 macro_rules! get_sphere {
