@@ -45,20 +45,18 @@ impl BVHNode {
         } else {
             l.sort_by(|a, b| box_compare!(z, a, b));
         }
-        let (left, right) = if l.len() == 1 {
+        let (left, right): (Box<Hitable>, Box<Hitable>) = if l.len() == 1 {
             (l[0].clone(), l[0].clone())
         } else if l.len() == 2 {
             (l[0].clone(), l[1].clone())
-            // } else {
-            //    // TODO: not implemented
-            //    let (svf, svl) = l.split_at(l.len() / 2);
-            //    let vf: Vec<Box<Hitable>> = vec![];
-            //    let vl: Vec<Box<Hitable>> = vec![];
-            //    vf.extend(svf.iter().map(|&i| i));
-            //    vl.extend(svl.iter().map(|&i| i));
-            //    (Box::new(BVHNode::new(&mut vf, time0, time1)), Box::new(BVHNode::new(&mut vl, time0, time1)))
         } else {
-            (l[0].clone(), l[1].clone())
+               let (svf, svl) = l.split_at(l.len() / 2);
+               let mut vl: Vec<Box<Hitable>> = vec![];
+               let mut vf: Vec<Box<Hitable>> = vec![];
+               //let vf: Vec<Box<Hitable>> = svf.iter().map(|&i| i);
+               vf.extend(svf.iter().map(|ref i| (**i).clone()));
+               vl.extend(svl.iter().map(|ref i| (**i).clone()));
+               (Box::new(BVHNode::new(&mut vf, time0, time1)), Box::new(BVHNode::new(&mut vl, time0, time1)))
         };
 
         let mut box_left = AABB::new(Vec3::new(0., 0., 0.), Vec3::new(0., 0., 0.));
