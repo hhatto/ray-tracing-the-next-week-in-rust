@@ -8,6 +8,8 @@ use utils::aabb::{AABB, surrounding_box};
 #[derive(Clone)]
 pub struct HitRecord {
     pub t: f32,
+    pub u: f32,
+    pub v: f32,
     pub p: Vec3,
     pub normal: Vec3,
     pub mat: Box<Material>,
@@ -18,6 +20,8 @@ impl HitRecord {
     pub fn new(m: Box<Material>) -> Self {
         Self {
             t: 0.,
+            u: 0.,
+            v: 0.,
             p: Vec3::new(0., 0., 0.),
             normal: Vec3::new(0., 0., 0.),
             mat: m,

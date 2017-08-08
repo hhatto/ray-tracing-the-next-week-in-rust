@@ -7,6 +7,7 @@ use utils::texture::Texture;
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool;
+    fn emitted(&self, u: f32, v: f32, p: Vec3) -> Vec3;
     fn box_clone(&self) -> Box<Material>;
     fn name(&self) -> String;
 }
@@ -34,6 +35,9 @@ impl Material for DummyMat {
     fn scatter(&self, _r_in: &Ray, _rec: &HitRecord, _attenuation: &mut Vec3, _scattered: &mut Ray) -> bool {
         true
     }
+    fn emitted(&self, _u: f32, _v: f32, _p: Vec3) -> Vec3 {
+        Vec3::new(0., 0., 0.)
+    }
     fn box_clone(&self) -> Box<Material> {
         Box::new((*self).clone())
     }
@@ -60,6 +64,9 @@ impl Material for Lambertian {
         *scattered = Ray::new(&rec.p, &target, 0.).clone();
         *attenuation = self.albedo.value(0., 0., rec.p.clone());
         true
+    }
+    fn emitted(&self, _u: f32, _v: f32, _p: Vec3) -> Vec3 {
+        Vec3::new(0., 0., 0.)
     }
     fn box_clone(&self) -> Box<Material> {
         Box::new((*self).clone())
@@ -98,6 +105,9 @@ impl Material for Metal {
         *scattered = s_ray.clone();
         *attenuation = self.albedo.clone();
         dot(scattered.direction(), &rec.normal) > 0.
+    }
+    fn emitted(&self, _u: f32, _v: f32, _p: Vec3) -> Vec3 {
+        Vec3::new(0., 0., 0.)
     }
     fn box_clone(&self) -> Box<Material> {
         Box::new((*self).clone())
@@ -156,11 +166,42 @@ impl Material for Dielectric {
 
         true
     }
+    fn emitted(&self, _u: f32, _v: f32, _p: Vec3) -> Vec3 {
+        Vec3::new(0., 0., 0.)
+    }
     fn box_clone(&self) -> Box<Material> {
         Box::new((*self).clone())
     }
     fn name(&self) -> String {
         "dielectric".to_string()
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Clone)]
+pub struct DiffuseLight {
+    emit: Box<Texture>,
+}
+
+#[allow(dead_code)]
+impl DiffuseLight {
+    pub fn new(a: Box<Texture>) -> Self {
+        Self { emit: a }
+    }
+}
+
+impl Material for DiffuseLight {
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord, _attenuation: &mut Vec3, _scattered: &mut Ray) -> bool {
+        false
+    }
+    fn emitted(&self, u: f32, v: f32, p: Vec3) -> Vec3 {
+        self.emit.value(u, v, p)
+    }
+    fn box_clone(&self) -> Box<Material> {
+        Box::new((*self).clone())
+    }
+    fn name(&self) -> String {
+        "diffuselight".to_string()
     }
 }
 
